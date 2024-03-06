@@ -1,4 +1,4 @@
-*.db
-*.py[cod]
-.web/
-__pycache__/
+__pycache__
+.venv/
+webapp/db/models_generated/*
+!webapp/db/models_generated/__init__.py

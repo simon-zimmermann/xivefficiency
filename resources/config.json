@@ -1,0 +1,9 @@
+{
+    "path_gamedata_csv": "gamedata/ffxiv-datamining/csv",
+    "debug_limit_db_columns": 0,
+    "debug_limit_db_rows": 0,
+    "debug_limit_universalis_scraper": 0,
+    "db_url": "sqlite:///resources/RESTingway.db",
+    "filepath_gamedata_parser_json": "resources/gamedata_parser.json",
+    "SQLALCHEMY_DATABASE_URI": "sqlite:///resources/RESTingway.db"
+}
