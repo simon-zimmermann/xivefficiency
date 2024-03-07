@@ -1,10 +1,11 @@
+import threading
+import time
 from sqlmodel import SQLModel
 from flask import Flask
 import json
 from flask_bootstrap import Bootstrap5
 import traceback
 from flask_wtf.csrf import CSRFProtect
-
 from webapp.common import util
 
 
@@ -46,3 +47,17 @@ for view in views_to_load:
         print(f"Failed to load view module {view} with exception:")
         print(f"\t{e}")
         traceback.print_exc()
+
+
+def scraper_thread():
+    print("Starting scraper thread")
+    while True:
+        print("Running scraper")
+        from webapp.universalis_scraper.scraper import refresh_universalis_data
+        with app.app_context():
+            refresh_universalis_data()
+        time.sleep(10)
+
+
+thread = threading.Thread(target=scraper_thread)
+# thread.start()

@@ -1,8 +1,8 @@
 import requests
 from datetime import datetime
 from sqlmodel import Session, select
+from flask import current_app as app
 
-from webapp.common import config
 from webapp.db import engine
 from webapp.db.models.UniversalisEntry import UniversalisEntry
 
@@ -55,7 +55,7 @@ def refresh_universalis_data():
     # get currently available items on universalis
     url = "https://universalis.app/api/v2/marketable"
     all_itemids = requests.get(url).json()
-    limit = config.debug_limit_universalis_scraper
+    limit = app.config["DEBUG_LIMITS"]["UNIVERSALIS_SCRAPER"]
     count = len(all_itemids) if limit == 0 else limit
     print(f"requesting data for {count} items from universalis")
     try:
