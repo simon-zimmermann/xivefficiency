@@ -2,10 +2,9 @@ import json
 import os
 import click
 from camel_converter import to_snake
+from flask import current_app as app
 
-from . import csv_util
-
-from webapp.common import config
+from webapp.gamedata_parser import csv_util
 from webapp.db import models_generated
 
 
@@ -56,7 +55,7 @@ class CSVColumnGenerator():
 
     def __add_to_json_config(self, model_name: str):
         """Adds a model_name to gamedata_parser.json for it to be loaded the next time."""
-        with open(config.filepath_gamedata_parser_json, "r+") as f:
+        with open(os.path.join(*app.config["PARSER_JSON_PATH"]), "r+") as f:
             jsonfile = json.load(f)
             lst: list = jsonfile["csv"]["files_to_parse"]
             datatype_str = f"{model_name}.csv"

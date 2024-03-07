@@ -1,7 +1,7 @@
 from flask import Blueprint
 import click
-from sqlmodel import SQLModel
-from webapp.db import engine
+import sqlalchemy
+from flask import current_app as app
 
 from webapp.gamedata_parser.parser import delete_generated_models, parse_csv
 
@@ -28,7 +28,9 @@ def clear_database():
     # Then delete all tables, and remove any references to them.
     # This is enough to re-create and re-import the tables/data, but the program still needs to be restarted.
     click.echo("Deleting all tables, and removing all references, mappers and registries.")
-    SQLModel.metadata.drop_all(engine)
-    SQLModel.metadata.clear()
+    local_engine = sqlalchemy.create_engine(app.config["DATABASE_URI"], echo=True)
+    m = sqlalchemy.MetaData()
+    m.reflect(local_engine)
+    m.drop_all(local_engine)
 
     click.echo('Database cleared; Generated code removed!')

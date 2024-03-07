@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, Response, jsonify
+from flask import Blueprint, Response
 from flask import current_app as app
 
 bp = Blueprint("admin", __name__, url_prefix="/api/admin")

@@ -2,8 +2,7 @@ import os
 from camel_converter import to_snake
 import click
 
-from .csv_column_generator import CSVColumnGenerator
-
+from webapp.gamedata_parser.csv_column_generator import CSVColumnGenerator
 from webapp.db import models, models_generated
 
 

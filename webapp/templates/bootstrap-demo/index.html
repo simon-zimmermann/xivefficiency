@@ -1,0 +1,16 @@
+{% extends 'bootstrap-demo/base.html' %}
+
+{% block content %}
+<h1>Bootstrap-Flask Demo Application</h1>
+<p>This demo uses Bootstrap version 5.</p>
+<ul>
+    <li><a href="{{ url_for('bootstrap-demo.test_form') }}">Form</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_nav') }}">Nav</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_bootswatch') }}">Bootswatch</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_pagination') }}">Pagination</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_flash') }}">Flash Messages</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_table') }}">Table</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_icon') }}">Icon</a></li>
+    <li><a href="{{ url_for('bootstrap-demo.test_icons') }}">Icons</a></li>
+</ul>
+{% endblock %}

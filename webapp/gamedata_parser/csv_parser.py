@@ -1,23 +1,21 @@
 import os
 import csv
-import io
 from types import ModuleType
 from sqlmodel import Session
 import click
-from . import csv_util
-from .csv_model_generator import CSVModelGenerator
+from flask import current_app as app
 
+from webapp.gamedata_parser import csv_util
+from webapp.gamedata_parser.csv_model_generator import CSVModelGenerator
 from webapp.common import util
-from webapp.common import config
 from webapp.db import models_generated, models, engine
-
 
 
 class CSVParser:
     def __init__(self, csv_filename: str, manual_fixes: list[dict]):
         self.csv_filename = csv_filename
         self.manual_fixes = manual_fixes
-        self.csv_filepath = os.path.join(config.path_gamedata_csv, csv_filename)
+        self.csv_filepath = os.path.join(*app.config["GAMEDATA_CSV_PATH"], csv_filename)
         self.model_name = self.csv_filename.split(".")[0]
         self.csv_colnames: list[str] = []
         self.csv_datatypes: list[str] = []
@@ -40,9 +38,10 @@ class CSVParser:
         self.__read_header()
 
         # If debugging, it is possible to limit the number of columns added to the database, since there can be a lot.
-        if (config.debug_limit_db_columns > 0):
-            del self.csv_colnames[config.debug_limit_db_columns:]
-            del self.csv_datatypes[config.debug_limit_db_columns:]
+        col_limit = app.config["DEBUG_LIMITS"]["DB_COLUMNS"]
+        if (col_limit > 0):
+            del self.csv_colnames[col_limit:]
+            del self.csv_datatypes[col_limit:]
 
         # Check whether the model has been overridden manually.
         model_manual_path = os.path.join(models.__path__[0], self.model_name + ".py")
@@ -130,7 +129,7 @@ class CSVParser:
     def __read_file_byline(self):
         for row in self.csvreader:
             # Debug option: make it faster
-            if (config.debug_limit_db_rows > 0 and self.csvreader.line_num > config.debug_limit_db_rows):
+            if (app.config["DEBUG_LIMITS"]["DB_ROWS"] > 0 and self.csvreader.line_num > app.config["DEBUG_LIMITS"]["DB_ROWS"]):
                 break
             keydict = {}
             for i in range(len(self.csv_colnames)):

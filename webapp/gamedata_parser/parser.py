@@ -1,14 +1,12 @@
 import json
 import os
-import io
 import sys
 from sqlmodel import SQLModel
 import click
+from flask import current_app as app
 
-from .csv_parser import CSVParser
-
+from webapp.gamedata_parser.csv_parser import CSVParser
 from webapp.db import models_generated, engine
-from webapp.common import config
 
 
 def delete_generated_models():
@@ -33,7 +31,7 @@ def parse_csv() -> (int, int, int):
     numGeneratedModels = 0
     numAddedToJsonConfig = 0
     rowsInserted = 0
-    with open(config.filepath_gamedata_parser_json) as f:
+    with open(os.path.join(*app.config["PARSER_JSON_PATH"])) as f:
         d = json.load(f)
         manual_fixes: list[dict] = d["csv"]["manual_fixes"]
         for entry in d["csv"]["files_to_parse"]:
