@@ -1,3 +1,5 @@
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+{% from 'bootstrap5/utils.html' import render_messages %}
 <!doctype html>
 <html lang="en">
 
@@ -17,8 +19,38 @@
 </head>
 
 <body>
-    <!-- Your page content -->
-    {% block content %}{% endblock %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    {{ render_nav_item("index.index", "XIVefficiency") }}
+                    {{ render_nav_item("admin.sitemap", "sitemap") }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.finalfantasyxiv.com/" target="_blank">
+                            Final Fantasy XIV online
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center">
+        {% block footer %}
+        <small> &copy; 2024-
+            <script>document.write(new Date().getFullYear())</script> <a href="">Zfox aka. Simon TODO GITHUB LINK</a>
+        </small>
+        {% endblock %}
+    </footer>
 
     {% block scripts %}
     <!-- Optional JavaScript -->

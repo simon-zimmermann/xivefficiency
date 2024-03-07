@@ -1,0 +1,10 @@
+{% extends "layout.jinja" %}
+
+{% block content %}
+<h1>Endpoints</h1>
+<ul>
+    {% for url, endpoint in links %}
+    <li><a href="{{ url }}">{{ endpoint }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

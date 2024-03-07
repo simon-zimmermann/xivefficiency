@@ -13,5 +13,6 @@
         "resources",
         "gamedata_parser.json"
     ],
-    "DATABASE_URI": "sqlite:///resources/RESTingway.db"
+    "DATABASE_URI": "sqlite:///resources/RESTingway.db",
+    "EXPLAIN_TEMPLATE_LOADING ":true
 }

@@ -1,0 +1,13 @@
+{% extends "layout.jinja" %}
+
+{% block content %}
+<h1>Admin overview</h1>
+<h2>Universalis test</h2>
+<pre>{{ universalis_test }}</pre>
+<h2>Database test</h2>
+<pre>{{ db_test }}</pre>
+<h2>Flask configuration</h2>
+<pre>{{ flask_config }}</pre>
+<h2>Environment Variables</h2>
+<pre>{{ env_vars }}</pre>
+{% endblock %}

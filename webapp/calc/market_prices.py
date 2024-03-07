@@ -108,7 +108,7 @@ def test_average_calc() -> list[dict]:
     itemlist = gathering.get_gatherable_all()
     prices = get_all(itemlist)
     sorted_prices = sorted(prices, key=lambda x: x["minimum"], reverse=True)
-    sorted_prices = sorted_prices[:10]
+    sorted_prices = sorted_prices[:3]
     for entry in sorted_prices:
         entry.pop("item")
     return sorted_prices

@@ -1,7 +1,7 @@
 
 from flask import current_app as app
 from flask import g
-from sqlmodel import create_engine
+from sqlmodel import SQLModel, create_engine
 from werkzeug.local import LocalProxy
 
 # The __init__.py files in those two modules will automatically import all python files in their directory
@@ -17,3 +17,4 @@ def get_engine():
 
 
 engine = LocalProxy(get_engine)
+SQLModel.metadata.create_all(engine)

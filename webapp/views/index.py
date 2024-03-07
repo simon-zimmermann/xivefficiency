@@ -4,5 +4,5 @@ bp = Blueprint("index", __name__, url_prefix="")
 
 
 @bp.route("/")
-def hello_world():
+def index():
     return render_template("index.jinja")

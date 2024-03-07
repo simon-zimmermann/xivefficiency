@@ -10,16 +10,14 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "webapp/xivefficiency.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_APP": "webapp.xivefficiency"
             },
             "args": [
                 "run",
                 "--no-debugger",
                 "--no-reload"
             ],
-            "jinja": true,
-            "autoStartBrowser": false
+            "jinja": true
         },
         {
             "name": "Flask DEV parse gamedata",
