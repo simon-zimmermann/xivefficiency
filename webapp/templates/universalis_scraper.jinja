@@ -1,0 +1,49 @@
+{% extends "layout.jinja" %}
+
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block content %}
+<h1>Universalis scraper</h1>
+<form method="POST">
+    {{ form.csrf_token }}
+    <div class="form-check form-switch">
+        {{ render_field(form.feature, onchange="this.form.submit()") }}
+    </div>
+</form>
+<h2>Log</h2>
+<div class="table-responsive" style="max-height:500px;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Message</th>
+                <th>Caller</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.message }}</td>
+                <td>{{ log.caller }}</td>
+                <td>{{ log.level }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<ul>
+    {% for url, endpoint in links %}
+    <li><a href="{{ url }}">{{ endpoint }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    setTimeout(function () {
+        window.location.reload(1);
+    }, 5000);
+</script>
+{% endblock %}

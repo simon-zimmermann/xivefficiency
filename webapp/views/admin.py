@@ -1,11 +1,16 @@
-from flask import Blueprint, render_template, url_for
+from turtle import onclick
+from flask import Blueprint, redirect, render_template, url_for
 from flask import current_app as app
 import json
 import os
+import flask
 from sqlmodel import Session, select
+from wtforms import BooleanField
+from flask_wtf import FlaskForm
 
 from webapp.calc import market_prices
 from webapp.db import engine
+from webapp.db.models.LogEntry import LogEntry
 from webapp.db.models_generated.GatheringType import GatheringType
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -37,3 +42,30 @@ def debug_overview():
                            flask_config=config_str,
                            universalis_test=universalis_test_str,
                            db_test=db_test_str)
+
+
+class MyForm(FlaskForm):
+    feature = BooleanField("Start Scraper")
+
+
+@bp.route("universalis_scraper", methods=["GET", "POST"])
+def universalis_scraper():
+    form = MyForm(feature=app.config["ADMIN_STATUS"]["ENABLE_SCRAPER"])
+
+    if form.validate_on_submit():
+        app.config["ADMIN_STATUS"]["ENABLE_SCRAPER"] = form.feature.data
+        return redirect(url_for("admin.universalis_scraper"))
+
+    with Session(engine) as session:
+        statement = select(LogEntry).limit(100).order_by(LogEntry.timestamp.desc())
+        logs = session.exec(statement).all()
+        logs_str = []
+        for log in logs:
+            logs_str.append({
+                "timestamp": log.timestamp.isoformat(' ', 'seconds'),
+                "message": log.message,
+                "caller": log.caller,
+                "level": log.level.name
+            })
+
+    return render_template("universalis_scraper.jinja", logs=logs_str, form=form)

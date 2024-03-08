@@ -1,4 +1,3 @@
-
 from flask import current_app as app
 from flask import g
 from sqlmodel import SQLModel, create_engine
@@ -17,4 +16,3 @@ def get_engine():
 
 
 engine = LocalProxy(get_engine)
-SQLModel.metadata.create_all(engine)

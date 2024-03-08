@@ -1,9 +1,12 @@
+import time
+import traceback
 import requests
 from datetime import datetime
 from sqlmodel import Session, select
-from flask import current_app as app
+from flask import Flask, current_app as app
 
-from webapp.db import engine
+from webapp.db import db_util, engine
+from webapp.db.models.LogEntry import LogLevel
 from webapp.db.models.UniversalisEntry import UniversalisEntry
 
 
@@ -57,13 +60,24 @@ def refresh_universalis_data():
     all_itemids = requests.get(url).json()
     limit = app.config["DEBUG_LIMITS"]["UNIVERSALIS_SCRAPER"]
     count = len(all_itemids) if limit == 0 else limit
-    print(f"requesting data for {count} items from universalis")
-    try:
-        for i in range(count):
+    db_util.log("Starting universalis data refresh")
+    db_util.log(f"Requesting data for {count} items from universalis")
+    for i in range(count):
+        try:
             item_id = all_itemids[i]
             if i % 10 == 0:
-                print(f"requested data for {i} out of {count} items from universalis")
+                db_util.log(f"Requested data for {i} out of {count} items from universalis")
             refresh_single_item(item_id)
-    except Exception as e:
-        print(f"error while requesting data from universalis: {e}")
-        pass
+        except Exception as e:
+            db_util.log(f"error while requesting data from universalis: {e}", LogLevel.ERROR)
+            db_util.log(traceback.format_exc(), LogLevel.ERROR)
+            pass
+
+
+def scraper_thread(local_app: Flask):
+    with local_app.app_context():
+        db_util.log("Starting universalis scraper thread")
+        while True:
+            if (local_app.config["ADMIN_STATUS"]["ENABLE_SCRAPER"]):
+                refresh_universalis_data()
+            time.sleep(10)

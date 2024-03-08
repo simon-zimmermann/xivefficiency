@@ -14,5 +14,7 @@
         "gamedata_parser.json"
     ],
     "DATABASE_URI": "sqlite:///resources/RESTingway.db",
-    "EXPLAIN_TEMPLATE_LOADING ":true
+    "ADMIN_STATUS":{
+        "ENABLE_SCRAPER": false
+    }
 }
