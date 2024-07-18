@@ -1,2 +1,8 @@
-# TODO: https://flask.palletsprojects.com/en/2.3.x/async-await/
-when pulling do git submodule update --init --recursive
+## Tech
+- python
+- sqlmodel
+
+
+## Resources
+- gamedata/ffxiv-datamining/ is the result of ```git submodule add https://github.com/xivapi/ffxiv-datamining gamedata/ffxiv-datamining ```
+- universalis docs: https://universalis.app/docs
