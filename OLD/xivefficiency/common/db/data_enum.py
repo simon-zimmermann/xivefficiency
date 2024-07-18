@@ -1,8 +1,8 @@
 from enum import Enum
 from sqlmodel import Session, select
 
-from webapp.db import engine
-from webapp.db.models_generated.GatheringType import GatheringType
+from db import engine
+from db.models_generated.GatheringType import GatheringType
 
 
 def get_gathering_types_dict() -> dict:

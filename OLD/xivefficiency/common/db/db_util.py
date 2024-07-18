@@ -1,8 +1,8 @@
 from sqlmodel import Session
 import inspect
 
-from webapp.db.models.LogEntry import LogEntry, LogLevel
-from webapp.db import engine
+from db.models.LogEntry import LogEntry, LogLevel
+from db import engine
 
 
 def log(message: str, level: LogLevel = LogLevel.INFO):

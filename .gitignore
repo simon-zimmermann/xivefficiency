@@ -1,5 +1,5 @@
 __pycache__
 .venv/
-webapp/db/models_generated/*
-!webapp/db/models_generated/__init__.py
+xivefficiency/db/models_generated/*
+!xivefficiency/db/models_generated/__init__.py
 resources/*.db

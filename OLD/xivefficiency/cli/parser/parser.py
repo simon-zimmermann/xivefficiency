@@ -2,22 +2,21 @@ import json
 import os
 import sys
 from sqlmodel import SQLModel
-import click
-from flask import current_app as app
+# import click
 
-from webapp.gamedata_parser.csv_parser import CSVParser
-from webapp.db import models_generated, engine
+from parser.csv_parser import CSVParser
+from common.db import models_generated, engine
 
 
 def delete_generated_models():
     # First unload all modules
-    click.echo("Unloading all model modules.")
+    # click.echo("Unloading all model modules.")
     for module in list(sys.modules.keys()):
         if module.startswith("app.storingway.models"):
             del sys.modules[module]
     # Then delete all model files
     path = models_generated.__path__[0]
-    click.echo(f"Deleting all model files in {path}.")
+    # click.echo(f"Deleting all model files in {path}.")
     files: list[str] = os.listdir(models_generated.__path__[0])
     for filename in files:
         if filename.endswith(".py") and filename != "__init__.py":
@@ -25,7 +24,7 @@ def delete_generated_models():
 
 
 def parse_csv() -> (int, int, int):
-    click.echo("Parsing CSV files.")
+    # click.echo("Parsing CSV files.")
     # Parse headers, create model classes. Save Parsers for later.
     parser_list: list[CSVParser] = []
     numGeneratedModels = 0
@@ -40,15 +39,16 @@ def parse_csv() -> (int, int, int):
 
             model_exists = parser.parse_header()
             if not model_exists:
-                click.echo(f"Model class {parser.model_name} does not exist. Generating it.")
+                # click.echo(f"Model class {parser.model_name} does not exist. Generating it.")
                 parser.generate_model()
                 numGeneratedModels += parser.numGeneratedModels
                 numAddedToJsonConfig += parser.numAddedToJsonConfig
 
-    click.echo("Successfully parsed headers of CSV files.")
+    # click.echo("Successfully parsed headers of CSV files.")
 
     if numAddedToJsonConfig > 0:
-        click.echo("Cannot parse csv bodies, since new models have been added to gamedata_parser.json.")
+        pass
+        # click.echo("Cannot parse csv bodies, since new models have been added to gamedata_parser.json.")
     else:
         # Re-create all tables to match with model definitions.
         SQLModel.metadata.create_all(engine)
@@ -57,5 +57,5 @@ def parse_csv() -> (int, int, int):
             parser.parse_body()
             rowsInserted += parser.rowsInserted
 
-        click.echo("Successfully parsed bodies of CSV files.")
+        # click.echo("Successfully parsed bodies of CSV files.")
     return numGeneratedModels, numAddedToJsonConfig, rowsInserted
