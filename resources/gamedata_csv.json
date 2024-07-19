@@ -6,8 +6,9 @@
     ],
     "filepath_self": [
         "resources",
-        "code_generator_config.json"
+        "gamedata_csv.json"
     ],
+    "debug_limit": 0,
     "manual_fixes": [
         {
             "model_name": "GatheringPointBase",
@@ -122,6 +123,11 @@
         "Race.csv",
         "Tribe.csv",
         "ContentMemberType.csv",
-        "ContentType.csv"
+        "ContentType.csv",
+        "Recipe.csv",
+        "CraftType.csv",
+        "RecipeLevelTable.csv",
+        "RecipeNotebookList.csv",
+        "SecretRecipeBook.csv"
     ]
 }

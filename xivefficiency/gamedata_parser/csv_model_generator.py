@@ -1,7 +1,7 @@
 import os
 from camel_converter import to_snake
 
-from .csv_column_generator import CSVColumnGenerator
+from xivefficiency.gamedata_parser.csv_column_generator import CSVColumnGenerator
 from xivefficiency.db import models, models_generated
 
 
@@ -11,8 +11,6 @@ class CSVModelGenerator():
         self.model_name = model_name
         self.config = config
         self.table_name = to_snake(self.model_name)
-        # make sure self.csv_colnames only contains unique values, rename duplicates
-        self.csv_colnames = csv_colnames
         self.csv_colnames = csv_colnames
         self.csv_datatypes = csv_datatypes
         self.numAddedToJsonConfig = 0

@@ -3,3 +3,4 @@ __pycache__
 xivefficiency/db/models_generated/*
 !xivefficiency/db/models_generated/__init__.py
 resources/*.db
+resources/*.db-journal

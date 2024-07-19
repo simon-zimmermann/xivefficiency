@@ -5,12 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run code generator",
+            "name": "Parse gamedata",
             "type": "debugpy",
             "request": "launch",
             "module": "xivefficiency",
             "args":[
-                "generator"
+                "parser"
+            ]
+        },{
+            "name": "delete generated files",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "xivefficiency",
+            "args":[
+                "cleanup"
             ]
         }
     ]

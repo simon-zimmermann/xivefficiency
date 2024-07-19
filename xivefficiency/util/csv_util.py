@@ -2,7 +2,7 @@ import re
 from camel_converter import to_snake
 
 
-def convert_colname(csvname: str) -> str:
+def csv_convert_colname(csvname: str) -> str:
     """Converts the name of a column in a csv file to a valid python variable name."""
     # The id column is called "#"
     if csvname == "#":
@@ -19,7 +19,7 @@ def convert_colname(csvname: str) -> str:
         return to_snake(fixed_name)
 
 
-def convert_value(python_datatype: str, value: str) -> int | bool | str | None:
+def csv_convert_value(python_datatype: str, value: str) -> int | bool | str | None:
     """Converts a string to the proper datatype. Accepts names converted by convert_datatype()."""
     if python_datatype == "int":
         # For some reason some IDs are decimal numbers. Remove the dot, should still be unique.
@@ -39,7 +39,7 @@ def convert_value(python_datatype: str, value: str) -> int | bool | str | None:
         return None
 
 
-def convert_datatype(csv_datatype: str) -> str:
+def csv_convert_datatype(csv_datatype: str) -> str:
     """Converts a datatype from the csv file to a valid python datatype.
     If the datatype is not recognized, it is assumed to be a foreign key, and return \"FOREIGN_KEY\"."""
     int_like = ["byte", "uint16", "uint32", "uint64", "int16", "int32", "int", "sbyte", "ubyte", "Row"]
@@ -63,20 +63,3 @@ def convert_datatype(csv_datatype: str) -> str:
     # Not in list -> probybly a reference to another table -> int
     else:
         return "FOREIGN_KEY"
-
-
-def make_unique(csv_colnames: list[str]) -> str:
-    """Makes sure that all column names are unique.
-    If they are not, a number is appended to the end of the name.
-    Empty names are ignored."""
-    unique_colnames = []
-    for colname in csv_colnames:
-        if (colname == ""):
-            continue
-        if colname in unique_colnames:
-            i = 1
-            while f"{colname}_{i}" in unique_colnames:
-                i += 1
-            colname = f"{colname}_{i}"
-        unique_colnames.append(colname)
-    return unique_colnames

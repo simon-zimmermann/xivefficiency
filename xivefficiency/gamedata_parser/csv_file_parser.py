@@ -1,17 +1,15 @@
-# import os
 import csv
 import os
 from types import ModuleType
 
-# from . import csv_util
-from .csv_model_generator import CSVModelGenerator
+from sqlmodel import Session
 
 from xivefficiency.db import models, models_generated
-from xivefficiency import util
+import xivefficiency.util as util
 
 
-class CSVParser:
-    def __init__(self, model_name: str, csv_filepath: str, config: dict):
+class CSVFileParser:
+    def __init__(self, model_name: str, csv_filepath: str, config: dict, engine):
         self.config = config
         self.manual_fixes = config["manual_fixes"]
         self.model_name: str = model_name
@@ -19,6 +17,7 @@ class CSVParser:
         self.csv_colnames: list[str] = []
         self.csv_datatypes: list[str] = []
         self.imported_module: bool | ModuleType = False
+        self.engine = engine
         self.numGeneratedModels = 0
         self.numAddedToJsonConfig = 0
         self.rowsInserted = 0
@@ -29,19 +28,7 @@ class CSVParser:
     def __del__(self):
         self.csvfile.close()
 
-    def parse_header(self) -> bool:
-        """Parses the header of the CSV file. If a matching model class exists, it is imported.
-        Returns True if a matching model class exists, False otherwise."""
-        # click.echo(f"Parsing header of CSV file {self.csv_filepath}")
-
-        self.__read_header()
-
-        # If debugging, it is possible to limit the number of columns added to the database, since there can be a lot.
-#        col_limit = app.config["DEBUG_LIMITS"]["DB_COLUMNS"]
-#        if (col_limit > 0):
-#            del self.csv_colnames[col_limit:]
-#            del self.csv_datatypes[col_limit:]
-#
+    def import_python_module(self):
         # Check whether the model has been overridden manually.
         model_manual_path = os.path.join(models.__path__[0], self.model_name + ".py")
         if os.path.exists(model_manual_path):
@@ -50,19 +37,11 @@ class CSVParser:
         else:
             self.imported_module = util.import_if_exists(self.model_name, models_generated.__package__)
 
-        return self.imported_module is not False
+    def parse_header(self) -> bool:
+        """Parses the header of the CSV file. If a matching model class exists, it is imported.
+        Returns True if a matching model class exists, False otherwise."""
+        print(f"Parsing header of CSV file {self.csv_filepath}")
 
-    def generate_model(self):
-        """Generates a model class for this CSV file. The resulting model class is imported."""
-        generator = CSVModelGenerator(self.model_name, self.csv_colnames, self.csv_datatypes, self.config)
-        generator.generate()
-        self.numGeneratedModels += 1
-        self.numAddedToJsonConfig += generator.numAddedToJsonConfig
-        # Import the newly generated model class.
-        # self.imported_module = util.import_if_exists(self.model_name, models_generated.__package__)
-
-    def __read_header(self):
-        """Reads the first three lines of the CSV file, and returns the column names and datatypes in this file."""
         indices = next(self.csvreader)
         raw_colnames = next(self.csvreader)
         raw_datatypes = next(self.csvreader)
@@ -103,3 +82,48 @@ class CSVParser:
                     raw_dt = fix["new_datatype"]
                     break
             self.csv_datatypes.append(raw_dt)
+
+        self.import_python_module()
+
+        return self.imported_module is not False
+
+    def parse_body(self):
+        """Parses the body of the CSV file, and add the data to the database."""
+        print(f"Parsing body of CSV file {self.csv_filepath}")
+
+        if self.imported_module == False:
+            raise RuntimeError(f"Model class {self.model_name} does not exist. Cannot parse body!")
+
+        with Session(self.engine) as session:
+            # For each line, build a dictionary.
+            # Keys are the column names, values are the values in the csv file.
+            for line_keydict in self.__read_file_byline():
+                model_class = getattr(self.imported_module, self.model_name)
+
+                # Only insert lines that are not already in the database.
+                if session.get(model_class, line_keydict["id"]) is None:
+                    # Actually create the ORM object, initializing it with the values from the csv file.
+                    db_obj = model_class(**line_keydict)
+                    session.add(db_obj)
+                    self.rowsInserted += 1
+            session.commit()
+
+    def __read_file_byline(self):
+        for row in self.csvreader:
+            # Debug option: make it faster
+            if (self.config["debug_limit"] > 0 and self.csvreader.line_num > self.config["debug_limit"]):
+                break
+            keydict = {}
+            for i in range(len(self.csv_colnames)):
+                # ignore empty columns
+                if (self.csv_colnames[i] == ""):
+                    continue
+                # Convert the string into a proper datatype.
+                py_datatype = util.csv_convert_datatype(self.csv_datatypes[i])
+                py_colname = util.csv_convert_colname(self.csv_colnames[i])
+                # insert into the id columns, not the object fields. This way the forein key relationship is established.
+                if (py_datatype == "FOREIGN_KEY"):
+                    py_colname += "_id"
+                converted_value = util.csv_convert_value(py_datatype, row[i])
+                keydict[py_colname] = converted_value
+            yield keydict

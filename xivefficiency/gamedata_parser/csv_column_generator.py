@@ -2,7 +2,7 @@ import json
 import os
 from camel_converter import to_snake
 
-from . import csv_util
+import xivefficiency.util as util
 from xivefficiency.db import models_generated, models
 
 
@@ -12,8 +12,8 @@ class CSVColumnGenerator():
         self.model_name = model_name
         self.csv_datatype = csv_datatype
         self.config = config
-        self.py_colname = csv_util.convert_colname(csv_colname)
-        self.py_datatype = csv_util.convert_datatype(csv_datatype)
+        self.py_colname = util.csv_convert_colname(csv_colname)
+        self.py_datatype = util.csv_convert_datatype(csv_datatype)
         self.foreign_table = ""
         self.foreign_model = ""
         self.addedToJson = False
