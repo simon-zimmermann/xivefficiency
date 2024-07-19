@@ -16,3 +16,7 @@ match sys.argv[1]:
         f.close()
         engine = create_engine("sqlite:///resources/RESTingway.db")  # TODO use config file
         handle_csv(gamedata_csv_config, engine)
+    case "playground":
+        from xivefficiency.playground.playground import playground
+        engine = create_engine("sqlite:///resources/RESTingway.db")  # TODO use config file
+        playground(engine)

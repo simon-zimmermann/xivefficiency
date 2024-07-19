@@ -20,6 +20,14 @@
             "args":[
                 "cleanup"
             ]
+        },{
+            "name": "playground",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "xivefficiency",
+            "args":[
+                "playground"
+            ]
         }
     ]
 }

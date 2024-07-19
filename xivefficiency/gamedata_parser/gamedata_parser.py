@@ -48,6 +48,8 @@ def handle_csv(config: dict, engine):
     for parser in parser_list:
         parser.parse_body()
         rowsInserted += parser.rowsInserted
+        if (parser.rowsInserted > 0):
+            print(f"File complete. Inserted {parser.rowsInserted} rows into the database")
 
     print("Successfully parsed all csv files present in config file.")
     print(f"Generated {numGeneratedModels} model classes.")
